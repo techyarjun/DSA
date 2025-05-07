@@ -1,11 +1,15 @@
 #include <iostream>
 using namespace std;
+
 int main() {
+
 int ip, row, col, n, mincost;
 cout<<"Enter the number of vertices: "; cin>>n;
+
 int visited[n], cost[n][n];
 string name[n];
 string city;
+
 for(int i=0; i<n; i++) {
 cout<<"\nEnter name of cities: "; cin>>city;
 name[i]= city;

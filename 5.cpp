@@ -67,13 +67,7 @@ void inorder(Node* root) {
 
 // --- Sample Usage
 int main() {
-    /*
-           10
-          /  \
-         5    15
-        / \     \
-       2   7     20
-    */
+   
     Node* root = new Node(10);
     root->left = new Node(5);
     root->right = new Node(15);

@@ -1,6 +1,7 @@
 #include<iostream>
 #include<queue>
 using namespace std;
+
 class Node {
 public:
     string data;
@@ -8,11 +9,14 @@ public:
     Node* left;
     Node* right;
     int height, bf;
+
     Node(string data, string means) : data(data), means(means), left(nullptr), right(nullptr), height(1), bf(0) {}
 };
+
 class AVL {
 private:
     Node* root;
+
     int height(Node* node) {
         return (node == nullptr) ? 0 : node->height;
     }
@@ -40,12 +44,16 @@ private:
     Node* rotateLeft(Node* x) {
         Node* y = x->right;
         Node* T2 = y->left;
+
         y->left = x;
         x->right = T2;
+
         updateHeightAndBF(x);
         updateHeightAndBF(y);
+
         return y;
     }
+
     Node* insert(Node* node, string data, string means) {
         if (node == nullptr)
             return new Node(data, means);
@@ -55,9 +63,10 @@ private:
             node->right = insert(node->right, data, means);
         else
             return node; // Duplicate not allowed
+
         updateHeightAndBF(node);
 
-        // Left Heavy
+        // Balancing
         if (node->bf > 1) {
             if (data < node->left->data) // Left-Left
                 return rotateRight(node);
@@ -66,11 +75,69 @@ private:
                 return rotateRight(node);
             }
         }
-        // Right Heavy
         if (node->bf < -1) {
             if (data > node->right->data) // Right-Right
                 return rotateLeft(node);
             else { // Right-Left
+                node->right = rotateRight(node->right);
+                return rotateLeft(node);
+            }
+        }
+
+        return node;
+    }
+
+    Node* minValueNode(Node* node) {
+        Node* current = node;
+        while (current && current->left != nullptr)
+            current = current->left;
+        return current;
+    }
+
+    Node* deleteNode(Node* node, string key) {
+        if (node == nullptr)
+            return node;
+
+        if (key < node->data)
+            node->left = deleteNode(node->left, key);
+        else if (key > node->data)
+            node->right = deleteNode(node->right, key);
+        else {
+            // Node with one or no child
+            if (node->left == nullptr || node->right == nullptr) {
+                Node* temp = node->left ? node->left : node->right;
+                if (temp == nullptr) {
+                    temp = node;
+                    node = nullptr;
+                } else
+                    *node = *temp;
+                delete temp;
+            } else {
+                Node* temp = minValueNode(node->right);
+                node->data = temp->data;
+                node->means = temp->means;
+                node->right = deleteNode(node->right, temp->data);
+            }
+        }
+
+        if (node == nullptr)
+            return node;
+
+        updateHeightAndBF(node);
+
+        // Balancing
+        if (node->bf > 1) {
+            if (node->left->bf >= 0)
+                return rotateRight(node);
+            else {
+                node->left = rotateLeft(node->left);
+                return rotateRight(node);
+            }
+        }
+        if (node->bf < -1) {
+            if (node->right->bf <= 0)
+                return rotateLeft(node);
+            else {
                 node->right = rotateRight(node->right);
                 return rotateLeft(node);
             }
@@ -111,14 +178,21 @@ public:
     void insert(string data, string means) {
         root = insert(root, data, means);
     }
+
+    void deleteKeyword(string key) {
+        root = deleteNode(root, key);
+    }
+
     void inorder() {
         cout << "\nIn ascending order:\n";
         inorder(root);
     }
+
     void revorder() {
         cout << "\nIn descending order:\n";
         revorder(root);
     }
+
     void search(string key) {
         Node* result = search(root, key);
         if (result != nullptr)
@@ -164,7 +238,7 @@ int main() {
     int choice;
     string word, meaning, key;
     do {
-        cout << "\nMenu:\n1. Insert\n2. Ascending Order\n3. Descending Order\n4. Search\n5. Update Meaning\n6. Level Order\n7. Exit\nChoice: ";
+        cout << "\nMenu:\n1. Insert\n2. Ascending Order\n3. Descending Order\n4. Search\n5. Update Meaning\n6. Level Order\n7. Delete Keyword\n8. Exit\nChoice: ";
         cin >> choice;
 
         switch (choice) {
@@ -195,12 +269,18 @@ int main() {
                 dictionary.levelOrder();
                 break;
             case 7:
+                cout << "Enter word to delete: ";
+                cin >> key;
+                dictionary.deleteKeyword(key);
+                cout << "Keyword deleted (if present).\n";
+                break;
+            case 8:
                 cout << "Exiting...\n";
                 break;
             default:
                 cout << "Invalid choice.\n";
         }
-    } while (choice != 7);
+    } while (choice != 8);
 
     return 0;
 }

@@ -37,7 +37,8 @@ public:
 
     // (ii) Find number of nodes in longest path
     int longestPath(Node* node) {
-        if (node == nullptr) return 0;
+        if (node == nullptr) 
+        return 0;
         int left = longestPath(node->left);
         int right = longestPath(node->right);
         return max(left, right) + 1;
@@ -45,7 +46,8 @@ public:
 
     // (iii) Minimum data value found in the tree
     int findMin(Node* node) {
-        if (node == nullptr) return -1;
+        if (node == nullptr) 
+        return -1;
         while (node->left != nullptr) {
             node = node->left;
         }
@@ -54,7 +56,8 @@ public:
 
     // (iv) Swap left and right pointers at every node
     Node* mirror(Node* node) {
-        if (node == nullptr) return nullptr;
+        if (node == nullptr) 
+        return nullptr;
         Node* left = mirror(node->left);
         Node* right = mirror(node->right);
         node->left = right;
@@ -64,10 +67,14 @@ public:
 
     // (v) Search a value
     bool search(Node* node, int key) {
-        if (node == nullptr) return false;
-        if (key == node->data) return true;
-        if (key < node->data) return search(node->left, key);
-        else return search(node->right, key);
+        if (node == nullptr) 
+        return false;
+        if (key == node->data) 
+        return true;
+        if (key < node->data) 
+        return search(node->left, key);
+        else 
+        return search(node->right, key);
     }
 
     void inorder(Node* node) {
@@ -103,7 +110,13 @@ int main() {
     cout << endl;
 
     int key = 60;
-    cout << "Search " << key << ": " << (tree.search(tree.root, key) ? "Found" : "Not Found") << endl;
+    // cout << "Search " << key << ": " << (tree.search(tree.root, key) ? "Found" : "Not Found") << endl;
+    bool found = tree.search(tree.root, key);
+    if (found) {
+        cout << "Search " << key << ": Found" << endl;
+    } else {
+        cout << "Search " << key << ": Not Found" << endl;
+    }
 
     return 0;
 }
